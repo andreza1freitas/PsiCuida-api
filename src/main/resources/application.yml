@@ -1,0 +1,39 @@
+debug: true
+
+server:
+  port: 8080
+  servlet:
+    context-path: /psicuida-api/v1/
+    encoding:
+      charset: UTF-8
+      force-response: true
+
+spring:
+  application:
+    name: psicuida-api
+  web:
+    resources:
+      add-mappings: false
+  datasource:
+    url: 'jdbc:postgresql://localhost:5432/PSICUIDA'
+    username: postgres
+    password: postgres
+
+  jpa:
+    show-sql: false
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
+    properties:
+      org:
+        hibernate:
+          '[globally_quoted_identifiers]': true
+          naming:
+            physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+          dialect: org.hibernate.dialect.PostgreSQLDialect
+
+psicuida:
+  security:
+    cors:
+      allowed-origins: >
+        http://localhost:3000
