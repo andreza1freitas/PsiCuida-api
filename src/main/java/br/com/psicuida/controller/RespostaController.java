@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.psicuida.entity.Paciente;
 import br.com.psicuida.entity.Pergunta;
 import br.com.psicuida.entity.Resposta;
 import br.com.psicuida.model.RespostaDTO;
@@ -48,12 +50,20 @@ public class RespostaController {
     @PostMapping
     public ResponseEntity<RespostaDTO> criar(@RequestBody RespostaDTO respostaDTO) {
         Optional<Pergunta> pergunta = perguntaRepository.findById(respostaDTO.getPerguntaId());
-        
         if (pergunta.isPresent()) {
             Resposta resposta = new Resposta();
             resposta.setConteudo(respostaDTO.getConteudo());
             resposta.setPergunta(pergunta.get());
-            
+
+            CrudRepository<Pergunta, Long> pacienteRepository;
+			// Buscar paciente pelo ID
+            Optional<Paciente> pacienteOptional = Optional.empty();
+            if (pacienteOptional.isPresent()) {
+                resposta.setPaciente(pacienteOptional.get());
+            } else {
+                return ResponseEntity.badRequest().body(null);  // Retornar um erro apropriado
+            }
+
             Resposta salvo = respostaRepository.save(resposta);
             return ResponseEntity.ok(new RespostaDTO(salvo));
         } else {

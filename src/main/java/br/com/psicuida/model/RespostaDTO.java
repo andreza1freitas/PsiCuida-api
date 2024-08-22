@@ -13,11 +13,13 @@ public class RespostaDTO {
     private Long id;
     private String conteudo;
     private Long perguntaId;
+    private Long paciente_id;
 
     // Construtor que aceita uma entidade Resposta como argumento
     public RespostaDTO(Resposta resposta) {
         this.id = resposta.getId();
         this.conteudo = resposta.getConteudo();
         this.perguntaId = resposta.getPergunta().getId();
+        this.paciente_id = resposta.getPaciente().getId();
     }
 }

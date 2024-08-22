@@ -16,9 +16,12 @@ public class Resposta {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String conteudo;
-
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "paciente_id")
+    private Paciente paciente;
+    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pergunta_id")
     private Pergunta pergunta;
