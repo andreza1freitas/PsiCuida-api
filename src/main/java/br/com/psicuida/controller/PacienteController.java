@@ -80,7 +80,7 @@ public class PacienteController {
         return pacienteRepository.findById(id)
                 .map(paciente -> {
                     pacienteRepository.delete(paciente);
-                    return ResponseEntity.ok().<Void>build();  // Especifica o tipo Void explicitamente
+                    return ResponseEntity.ok().<Void>build(); 
                 })
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }

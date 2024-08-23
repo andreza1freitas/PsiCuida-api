@@ -65,10 +65,8 @@ public class AgendamentoSessaoController {
 	    Optional<ProfissionalSaude> profissional = profissionalSaudeRepository.findById(agendamentoDTO.getProfissionalId());
 
 	    if (paciente.isPresent() && profissional.isPresent()) {
-	        // Verificar se já existe um agendamento no mesmo dia e horário para o mesmo profissional
 	        boolean exists = agendamentoSessaoRepository.existsByDataHoraAndProfissionalId(agendamentoDTO.getDataHora(), agendamentoDTO.getProfissionalId());
 	        if (exists) {
-	            // Retorna status 204 (No Content) sem tentar criar outro agendamento
 	            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	        }
 

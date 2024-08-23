@@ -25,7 +25,6 @@ public class PerguntaDTO {
         this.titulo = pergunta.getTitulo();
         this.descricao = pergunta.getDescricao();
         this.pacienteId = pergunta.getPaciente().getId();
-        //this.respostas = pergunta.getRespostas().stream().map(RespostaDTO::new).collect(Collectors.toList());
         this.respostas = pergunta.getRespostas() != null ?
                 pergunta.getRespostas().stream().map(RespostaDTO::new).collect(Collectors.toList()) :
                 new ArrayList<>();

@@ -28,5 +28,4 @@ public class Diario {
     @JoinColumn(name = "paciente_id")
     private Paciente paciente;
 
-    //
 }

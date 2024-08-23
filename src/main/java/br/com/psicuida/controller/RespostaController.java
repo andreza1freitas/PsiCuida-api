@@ -5,7 +5,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,69 +26,57 @@ import br.com.psicuida.repository.RespostaRepository;
 @RequestMapping("/respostas")
 public class RespostaController {
 
-    @Autowired
-    private RespostaRepository respostaRepository;
-    
-    @Autowired
-    private PerguntaRepository perguntaRepository;
+	@Autowired
+	private RespostaRepository respostaRepository;
 
-    @GetMapping
-    public List<RespostaDTO> listarTodos() {
-        return respostaRepository.findAll().stream()
-                .map(RespostaDTO::new)
-                .collect(Collectors.toList());
-    }
+	@Autowired
+	private PerguntaRepository perguntaRepository;
 
-    @GetMapping("/{id}")
-    public ResponseEntity<RespostaDTO> buscarPorId(@PathVariable Long id) {
-        Optional<Resposta> resposta = respostaRepository.findById(id);
-        return resposta.map(value -> ResponseEntity.ok(new RespostaDTO(value)))
-                       .orElseGet(() -> ResponseEntity.notFound().build());
-    }
+	@GetMapping
+	public List<RespostaDTO> listarTodos() {
+		return respostaRepository.findAll().stream().map(RespostaDTO::new).collect(Collectors.toList());
+	}
 
-    @PostMapping
-    public ResponseEntity<RespostaDTO> criar(@RequestBody RespostaDTO respostaDTO) {
-        Optional<Pergunta> pergunta = perguntaRepository.findById(respostaDTO.getPerguntaId());
-        if (pergunta.isPresent()) {
-            Resposta resposta = new Resposta();
-            resposta.setConteudo(respostaDTO.getConteudo());
-            resposta.setPergunta(pergunta.get());
+	@GetMapping("/{id}")
+	public ResponseEntity<RespostaDTO> buscarPorId(@PathVariable Long id) {
+		Optional<Resposta> resposta = respostaRepository.findById(id);
+		return resposta.map(value -> ResponseEntity.ok(new RespostaDTO(value)))
+				.orElseGet(() -> ResponseEntity.notFound().build());
+	}
 
-            CrudRepository<Pergunta, Long> pacienteRepository;
-			// Buscar paciente pelo ID
-            Optional<Paciente> pacienteOptional = Optional.empty();
-            if (pacienteOptional.isPresent()) {
-                resposta.setPaciente(pacienteOptional.get());
-            } else {
-                return ResponseEntity.badRequest().body(null);  // Retornar um erro apropriado
-            }
+	@PostMapping
+	public ResponseEntity<RespostaDTO> criar(@RequestBody RespostaDTO respostaDTO) {
+	    Optional<Pergunta> pergunta = perguntaRepository.findById(respostaDTO.getPerguntaId());
+	    if (pergunta.isPresent()) {
+	        Resposta resposta = new Resposta();
+	        resposta.setConteudo(respostaDTO.getConteudo());
+	        resposta.setPergunta(pergunta.get());
 
-            Resposta salvo = respostaRepository.save(resposta);
-            return ResponseEntity.ok(new RespostaDTO(salvo));
-        } else {
-            return ResponseEntity.notFound().build();  // Se a pergunta não for encontrada
-        }
-    }
+	        Paciente paciente = new Paciente();
+	        paciente.setId(respostaDTO.getPacienteId());
+	        resposta.setPaciente(paciente);
 
+	        Resposta salvo = respostaRepository.save(resposta);
+	        return ResponseEntity.ok(new RespostaDTO(salvo));
+	    } else {
+	        return ResponseEntity.notFound().build(); 
+	    }
+	}
+	@PutMapping("/{id}")
+	public ResponseEntity<RespostaDTO> atualizar(@PathVariable Long id, @RequestBody RespostaDTO respostaDTO) {
+		return respostaRepository.findById(id).map(resposta -> {
+			resposta.setConteudo(respostaDTO.getConteudo());
+			Resposta atualizado = respostaRepository.save(resposta);
+			return ResponseEntity.ok(new RespostaDTO(atualizado));
+		}).orElseGet(() -> ResponseEntity.notFound().build());
+	}
 
-    @PutMapping("/{id}")
-    public ResponseEntity<RespostaDTO> atualizar(@PathVariable Long id, @RequestBody RespostaDTO respostaDTO) {
-        return respostaRepository.findById(id)
-                .map(resposta -> {
-                    resposta.setConteudo(respostaDTO.getConteudo());
-                    Resposta atualizado = respostaRepository.save(resposta);
-                    return ResponseEntity.ok(new RespostaDTO(atualizado));
-                })
-                .orElseGet(() -> ResponseEntity.notFound().build());
-    }
+	@DeleteMapping("/{id}")
+	public ResponseEntity<Void> deletar(@PathVariable Long id) {
+		return respostaRepository.findById(id).map(resposta -> {
+			respostaRepository.delete(resposta);
+			return ResponseEntity.ok().<Void>build();
+		}).orElseGet(() -> ResponseEntity.notFound().build());
+	}
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletar(@PathVariable Long id) {
-        return respostaRepository.findById(id)
-                .map(resposta -> {
-                    respostaRepository.delete(resposta);
-                    return ResponseEntity.ok().<Void>build();
-                })
-                .orElseGet(() -> ResponseEntity.notFound().build());
-    }
 }

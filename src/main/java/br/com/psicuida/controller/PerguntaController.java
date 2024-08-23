@@ -14,72 +14,75 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.psicuida.entity.Paciente;
 import br.com.psicuida.entity.Pergunta;
 import br.com.psicuida.model.PerguntaDTO;
+import br.com.psicuida.model.RespostaDTO;
 import br.com.psicuida.repository.PerguntaRepository;
 
 @RestController
 @RequestMapping("/perguntas")
 public class PerguntaController {
 
-    @Autowired
-    private PerguntaRepository perguntaRepository;
-    
-    @GetMapping
-    public List<PerguntaDTO> listarTodos(@RequestParam Long pacienteId) {
-    	var listaPerguntas = perguntaRepository.findByPacienteId(pacienteId).stream()
-        .map(PerguntaDTO::new)
-        .collect(Collectors.toList());
-        return listaPerguntas;
-    }
+	@Autowired
+	private PerguntaRepository perguntaRepository;
 
-    @GetMapping("/{id}")
-    public ResponseEntity<PerguntaDTO> buscarPorId(@PathVariable Long id) {
-        Optional<Pergunta> pergunta = perguntaRepository.findById(id);
-        return pergunta.map(value -> ResponseEntity.ok(new PerguntaDTO(value)))
-                       .orElseGet(() -> ResponseEntity.notFound().build());
-    }
-    
+	@GetMapping("/listarTodos")
+	public List<PerguntaDTO> listarTodos() {
+		var listaPerguntas = perguntaRepository.findAll().stream().map(PerguntaDTO::new).collect(Collectors.toList());
+		return listaPerguntas;
+	}
 
-    @PostMapping
-    public ResponseEntity<PerguntaDTO> adicionarPergunta(@RequestBody PerguntaDTO perguntaDTO) {
-        Pergunta novaPergunta = new Pergunta();
-        novaPergunta.setTitulo(perguntaDTO.getTitulo());
-        novaPergunta.setDescricao(perguntaDTO.getDescricao());
+	@GetMapping("/{id}")
+	public ResponseEntity<PerguntaDTO> buscarPorId(@PathVariable Long id) {
+		Optional<Pergunta> pergunta = perguntaRepository.findById(id);
+		return pergunta.map(value -> ResponseEntity.ok(new PerguntaDTO(value)))
+				.orElseGet(() -> ResponseEntity.notFound().build());
+	}
 
-        // Assumindo que o pacienteId é enviado como parte do DTO
-        Paciente paciente = new Paciente();
-        paciente.setId(perguntaDTO.getPacienteId());
-        novaPergunta.setPaciente(paciente);
+	@PostMapping
+	public ResponseEntity<PerguntaDTO> adicionarPergunta(@RequestBody PerguntaDTO perguntaDTO) {
+		Pergunta novaPergunta = new Pergunta();
+		novaPergunta.setTitulo(perguntaDTO.getTitulo());
+		novaPergunta.setDescricao(perguntaDTO.getDescricao());
 
-        Pergunta perguntaSalva = perguntaRepository.save(novaPergunta);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new PerguntaDTO(perguntaSalva));
-    }
+		Paciente paciente = new Paciente();
+		paciente.setId(perguntaDTO.getPacienteId());
+		novaPergunta.setPaciente(paciente);
 
-    @PutMapping("/{id}")
-    public ResponseEntity<PerguntaDTO> atualizar(@PathVariable Long id, @RequestBody PerguntaDTO perguntaDTO) {
-        return perguntaRepository.findById(id)
-                .map(pergunta -> {
-                    pergunta.setTitulo(perguntaDTO.getTitulo());
-                    pergunta.setDescricao(perguntaDTO.getDescricao());
-                    Pergunta atualizado = perguntaRepository.save(pergunta);
-                    return ResponseEntity.ok(new PerguntaDTO(atualizado));
-                })
-                .orElseGet(() -> ResponseEntity.notFound().build());
-    }
+		Pergunta perguntaSalva = perguntaRepository.save(novaPergunta);
+		return ResponseEntity.status(HttpStatus.CREATED).body(new PerguntaDTO(perguntaSalva));
+	}
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletar(@PathVariable Long id) {
-        return perguntaRepository.findById(id)
-                .map(pergunta -> {
-                    perguntaRepository.delete(pergunta);
-                    return ResponseEntity.ok().<Void>build();
-                })
-                .orElseGet(() -> ResponseEntity.notFound().build());
-    }
+	@PutMapping("/{id}")
+	public ResponseEntity<PerguntaDTO> atualizar(@PathVariable Long id, @RequestBody PerguntaDTO perguntaDTO) {
+		return perguntaRepository.findById(id).map(pergunta -> {
+			pergunta.setTitulo(perguntaDTO.getTitulo());
+			pergunta.setDescricao(perguntaDTO.getDescricao());
+			Pergunta atualizado = perguntaRepository.save(pergunta);
+			return ResponseEntity.ok(new PerguntaDTO(atualizado));
+		}).orElseGet(() -> ResponseEntity.notFound().build());
+	}
+
+	@DeleteMapping("/{id}")
+	public ResponseEntity<Void> deletar(@PathVariable Long id) {
+		return perguntaRepository.findById(id).map(pergunta -> {
+			perguntaRepository.delete(pergunta);
+			return ResponseEntity.ok().<Void>build();
+		}).orElseGet(() -> ResponseEntity.notFound().build());
+	}
+
+	@GetMapping("/{id}/respostas")
+	public ResponseEntity<List<RespostaDTO>> listarRespostasPorPergunta(@PathVariable Long id) {
+		Optional<Pergunta> pergunta = perguntaRepository.findById(id);
+		if (pergunta.isPresent()) {
+			List<RespostaDTO> respostasDTO = pergunta.get().getRespostas().stream().map(RespostaDTO::new)
+					.collect(Collectors.toList());
+			return ResponseEntity.ok(respostasDTO);
+		} else {
+			return ResponseEntity.notFound().build();
+		}
+	}
 }
-

@@ -18,9 +18,8 @@ public class DiarioDTO {
     private String fezBem;
     private String fezMal;
     private String licoesAprendidas;
-    private Long pacienteId; // Adicionado o campo pacienteId
+    private Long pacienteId; 
 
-	// Construtor que aceita uma entidade Diario como argumento
 	public DiarioDTO(Diario diario) {
 		this.id = diario.getId();
 		this.data = diario.getData();
@@ -28,6 +27,6 @@ public class DiarioDTO {
 		this.fezBem = diario.getFezBem();
 		this.fezMal = diario.getFezMal();
 		this.licoesAprendidas = diario.getLicoesAprendidas();
-		this.pacienteId = diario.getPaciente().getId(); // Associa o pacienteId do Diario
+		this.pacienteId = diario.getPaciente().getId(); 
 	}
 }

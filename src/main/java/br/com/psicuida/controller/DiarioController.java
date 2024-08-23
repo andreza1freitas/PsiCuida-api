@@ -84,7 +84,6 @@ public class DiarioController {
 			diario.setFezMal(diarioDTO.getFezMal());
 			diario.setLicoesAprendidas(diarioDTO.getLicoesAprendidas());
 
-			// Associa o diário ao paciente
 			Paciente paciente = pacienteRepository.findById(diarioDTO.getPacienteId())
 					.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Paciente não encontrado"));
 			diario.setPaciente(paciente);
