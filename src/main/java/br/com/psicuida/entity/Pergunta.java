@@ -1,6 +1,8 @@
 package br.com.psicuida.entity;
 
 import java.util.List;
+import java.time.LocalDate;
+import org.hibernate.annotations.CreationTimestamp;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -31,6 +33,9 @@ public class Pergunta {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "paciente_id")
     private Paciente paciente;
+    
+    @CreationTimestamp
+    private LocalDate data;
 
     @OneToMany(mappedBy = "pergunta", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Resposta> respostas;

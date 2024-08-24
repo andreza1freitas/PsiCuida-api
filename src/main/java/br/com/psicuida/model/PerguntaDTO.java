@@ -1,5 +1,6 @@
 package br.com.psicuida.model;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,6 +19,7 @@ public class PerguntaDTO {
     private String titulo;
     private String descricao;
     private Long pacienteId;
+    private LocalDate data;
 	private List<RespostaDTO> respostas;
     
     public PerguntaDTO(Pergunta pergunta) {
@@ -25,6 +27,7 @@ public class PerguntaDTO {
         this.titulo = pergunta.getTitulo();
         this.descricao = pergunta.getDescricao();
         this.pacienteId = pergunta.getPaciente().getId();
+        this.data = pergunta.getData();
         this.respostas = pergunta.getRespostas() != null ?
                 pergunta.getRespostas().stream().map(RespostaDTO::new).collect(Collectors.toList()) :
                 new ArrayList<>();

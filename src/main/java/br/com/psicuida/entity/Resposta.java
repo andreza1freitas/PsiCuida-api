@@ -1,5 +1,8 @@
 package br.com.psicuida.entity;
 
+import java.time.LocalDate;
+import org.hibernate.annotations.CreationTimestamp;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -25,5 +28,8 @@ public class Resposta {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pergunta_id")
     private Pergunta pergunta;
+    
+    @CreationTimestamp
+    private LocalDate data;
 
 }
