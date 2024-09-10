@@ -25,9 +25,6 @@ import br.com.psicuida.model.DiarioDTO;
 import br.com.psicuida.repository.DiarioRepository;
 import br.com.psicuida.repository.PacienteRepository;
 
-/**
- * @author teste2
- */
 @RestController
 @RequestMapping("/diarios")
 public class DiarioController {

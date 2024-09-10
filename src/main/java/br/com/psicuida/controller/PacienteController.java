@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.psicuida.entity.Paciente;
+import br.com.psicuida.enums.Situacao;
 import br.com.psicuida.model.PacienteDTO;
 import br.com.psicuida.repository.PacienteRepository;
 
@@ -51,6 +52,7 @@ public class PacienteController {
         paciente.setEstadoCivil(pacienteDTO.getEstadoCivil());
         paciente.setTratamento(pacienteDTO.getTratamento());
         paciente.setSenha(pacienteDTO.getSenha());
+        paciente.setSituacao(Situacao.ATIVO);
         
         Paciente salvo = pacienteRepository.save(paciente);
         return ResponseEntity.ok(new PacienteDTO(salvo));
@@ -81,6 +83,17 @@ public class PacienteController {
                 .map(paciente -> {
                     pacienteRepository.delete(paciente);
                     return ResponseEntity.ok().<Void>build(); 
+                })
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+    
+    @PutMapping("/desativar/{id}")
+    public ResponseEntity<Void> desativar(@PathVariable Long id) {
+        return pacienteRepository.findById(id)
+                .map(paciente -> {
+                    paciente.setSituacao(Situacao.INATIVO); 
+                    pacienteRepository.save(paciente);
+                    return ResponseEntity.ok().<Void>build();
                 })
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }

@@ -5,6 +5,7 @@ import java.util.List;
 
 import br.com.psicuida.enums.EstadoCivil;
 import br.com.psicuida.enums.Genero;
+import br.com.psicuida.enums.Situacao;
 import br.com.psicuida.enums.Tratamento;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -55,10 +56,20 @@ public class Paciente {
 
     @Column(length = 30) 
     private String senha;
+    
+    @Enumerated(EnumType.STRING) 
+    @Column(length = 10) 
+    private Situacao situacao;
 
     @OneToMany(mappedBy = "paciente", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Diario> diarios;
 
     @OneToMany(mappedBy = "paciente", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<AgendamentoSessao> agendamentos;
+    
+    @OneToMany(mappedBy = "paciente", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Pergunta> perguntas;
+    
+    
+    
 }

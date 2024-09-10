@@ -22,7 +22,7 @@ public class Resposta {
     private String conteudo;
     
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "paciente_id")
+    @JoinColumn(name = "paciente_id", nullable = true)
     private Paciente paciente;
     
     @ManyToOne(fetch = FetchType.LAZY)
